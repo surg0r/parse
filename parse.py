@@ -184,13 +184,13 @@ if __name__ == "__main__":
 
     bc = Block_Chain(blkdata)
 
-    for x in range(0,len(blkdata)):
+    for x in range(0,len(blkdata)):          #this and code below could be performed class Block_Chain
 
         if bc.index > len(blkdata)-4:        #reached the end of the file..
 
             #insert db insertion code here..
 
-            print addresses
+            #print addresses
 
             exit()
 
