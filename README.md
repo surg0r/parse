@@ -6,6 +6,7 @@ It can be easily extended to allow extraction of further data but at present all
 every bitcoin address ever used (contained in the .dat file)
 
 Things to improve:
+
 1) filename argument for the .dat file to allow a batch sweep of the entire blockchain
 
 2) put in mysql insertion code
