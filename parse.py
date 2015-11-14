@@ -5,8 +5,12 @@ __author__ = 'pete'
 #addresses linked to a database..
 
 import binascii
+import glob
 from bitcoin import *
 import hashlib
+import MySQLdb
+
+
 
 def to_hex(bytestring):
     """
@@ -62,6 +66,25 @@ def ripemd160_to_address(key_hash):
 def public_key_to_address(public_key):
     return ripemd160_to_address(hash160(public_key))
 
+class Database:
+
+    def __init__(self):
+        self.host = 'localhost'
+        self.user = 'pydb'
+        self.passwd = 'password'
+        self.db  = 'pydb'
+        self.connection = MySQLdb.connect(self.host, self.user, self.passwd, self.db)
+
+    def query(self, q):
+        cursor = self.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute(q)
+        return cursor.fetchall()
+
+    def commit(self):
+        self.connection.commit()
+
+    def __del__(self):
+        self.connection.close()
 
 class Block_Chain:
     def __init__(self, data):
@@ -175,37 +198,56 @@ class Output:                                   #useful script info https://en.b
 
 if __name__ == "__main__":
 
-    bcfile = open('blk00001.dat')
-    blkdata = bcfile.read()
-
+    ran_addr = []
+    match = []
     pubkeys = []
     addresses = []
-    address_count = 0
 
-    bc = Block_Chain(blkdata)
 
-    for x in range(0,len(blkdata)):          #this and code below could be performed class Block_Chain
+    db = Database()                     #import the list of generated bitcoin addresses from database
+    q = "SELECT VERSION()"
+    print db.query(q)
+    q = 'SELECT ADDR FROM BRAIN'
+    ran_addr = db.query(q)
+    print 'Imported '+str(len(ran_addr))+' addresses from mysql..'
 
-        if bc.index > len(blkdata)-4:        #reached the end of the file..
 
-            #insert db insertion code here..
+    bcfiles = glob.glob('./*.dat')
+    for bcf in range(len(bcfiles)):
+        bcfile = open(bcfiles[bcf])
+        blkdata = bcfile.read()
 
-            #print addresses
+        print 'Parsing '+bcfiles[bcf]
 
-            exit()
+        bc = Block_Chain(blkdata)
 
-        magic_bytes = bc.uint_32()
+        for x in range(len(blkdata)):          #this and code below could be performed class Block_Chain
 
-        if magic_bytes == 0xD9B4BEF9:
-            blk = Block(magic_bytes)
+            if bc.index > len(blkdata)-4:        #reached the end of the dat file..
+                print bcfiles[bcf]+', blocks:'+str(bc.blockcount)+' total addresses n: '+str(len(addresses))
+                #mysql db insertion code here..
+                #for x in range()
+                #   for x in range(len(addresses)):
+                #       q="INSERT INTO BTC (PUBKEYHASH,ADDRESS) VALUES ('%s','%s')" % (pubkeys[x],addresses[x])
+                #       db.query(q)
+                #       db.commit()
+                #       time.sleep(0.0001)
+                break
 
-            bc.blockcount += 1
-            print 'Block '+str(bc.blockcount)+' @ '+str(x)+', len '+str(blk.block_length)
-            print 'Number of transactions: '+str(blk.transaction_count)
-            print 'Number of addresses found in block: '+str(len(addresses)-address_count)
-            address_count = len(addresses)
-            print 'Total number of addresses found: '+str(address_count)
+            magic_bytes = bc.uint_32()
 
-        else:
-            bc.index -= 3                   #iterate through until hit magic byte..
+            if magic_bytes == 0xD9B4BEF9:
+                blk = Block(magic_bytes)
+                bc.blockcount += 1
+               # print 'Block '+str(bc.blockcount)+' @ '+str(x)+', len '+str(blk.block_length)
+               # print 'Number of transactions: '+str(blk.transaction_count)
+            else:
+                bc.index -= 3                   #iterate through until hit magic byte..
 
+    print 'Matching '+str(len(ran_addr))+' generated with '+str(len(addresses))+'..(this will take a long, long, long time)'
+    for x in range(len(ran_addr)):
+        for y in range(len(addresses)):
+            if ran_addr[x] == addresses[y]:
+                match.append(ran_addr[x])
+                print ran_addr[x]
+    print str(len(match))+' matches'

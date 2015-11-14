@@ -5,5 +5,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="pydb" />
+    <orderEntry type="module" module-name="mspw-pdf" />
+    <orderEntry type="module" module-name="test" />
   </component>
 </module>

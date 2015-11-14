@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../mspw-pdf/.idea/mspw-pdf.iml" filepath="$PROJECT_DIR$/../mspw-pdf/.idea/mspw-pdf.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/parse.iml" filepath="$PROJECT_DIR$/.idea/parse.iml" />
       <module fileurl="file://$PROJECT_DIR$/../pydb/.idea/pydb.iml" filepath="$PROJECT_DIR$/../pydb/.idea/pydb.iml" />
+      <module fileurl="file://$USER_HOME$/kivy/test/.idea/test.iml" filepath="$USER_HOME$/kivy/test/.idea/test.iml" />
     </modules>
   </component>
 </project>
